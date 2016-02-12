@@ -1,0 +1,19 @@
+import RPi.GPIO as GPIO
+import time
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+GPIO.setup(4, GPIO.OUT)
+
+led = GPIO.PWM(4, 833)
+led.start(0)
+
+while(True):
+	int lim = 0
+	while(lim < 500):
+	for dc in range(0	, 101, 5):
+		led.ChangeDutyCycle(dc)
+		time.sleep(.1)
+	for dc in range(100, -1, -5):
+		led.ChangeDutyCycle(dc)
+		time.sleep(.1)
