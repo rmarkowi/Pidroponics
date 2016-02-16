@@ -53,10 +53,11 @@ heatToggled = False
 
 def main():
 	setupCam()
-	while(not capturePlants()):
-		pass
+#	while(not capturePlant()):
+#		pass
 	while(not collectData()):
 		pass
+
 	toggleLight()
 	time.sleep(5)
 	toggleLight()
@@ -67,7 +68,7 @@ def main():
 	time.sleep(5)
 	toggleHeat()
 	time.sleep(5)
-	toggleHear()
+	toggleHeat()
 	time.sleep(5)
 	print("Begining Life Sequence")
 	while(True):
@@ -78,14 +79,15 @@ def main():
 				pass
 		if(currentMinute == 0):
 			while(not collectData()):
-			pass
-		if(currentHour == 7 || currentHour == 23):
+				pass
+		if(currentHour == 7 or currentHour == 23):
 			toggleLight()
-		if(currentMinute % 5 == 0)
+
+		if(currentMinute % 5 == 0):
 			toggleWater()
 			time.sleep(120)
 			toggleWater()
-		if(tempReadings[-1] <= 16 || tempReadings[-1] >= 27):	
+		if(tempReadings[-1] <= 16 or tempReadings[-1] >= 27):	
 			toggleHeat()
 
 def capturePlant():
@@ -126,6 +128,7 @@ def collectData():
 	return True
 
 def toggleLight():
+	global lightToggled
 	if(lightToggled):
 		print("Turning light off")
 		GPIO.output(lightTogglePin, 0)
@@ -136,6 +139,7 @@ def toggleLight():
 		lightToggled = True
 
 def toggleHeat():
+	global heatToggled
         if(heatToggled):
                 print("Turning heat off")
                 GPIO.output(heatTogglePin, 0)
@@ -146,6 +150,7 @@ def toggleHeat():
                 heatToggled = True
 
 def toggleWater():
+	global waterToggled
 	if(waterToggled):
 		print("Turning water off")
 		GPIO.output(waterTogglePin, 0)
