@@ -1,0 +1,59 @@
+import RPi.GPIO as GPIO
+import time
+import picamera
+import os
+import calendar
+
+print("Starting pidroponics-main")
+susanEnablePinNum = 17
+susanDirPinNum = 2
+susanStepPinNum = 4
+susanPwmHz = 10
+susanDutyCycle = 50
+susanStepTime = 1.388888
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+GPIO.setup(susanEnablePinNum, GPIO.OUT)
+GPIO.setup(susanDirPinNum, GPIO.OUT)
+GPIO.setup(susanStepPinNum, GPIO.OUT)
+
+GPIO.output(susanEnablePinNum, 1)
+GPIO.output(susanDirPinNum, 0)
+GPIO.output(susanStepPinNum, 0)
+
+susanStepPin = GPIO.PWM(susanStepPinNum, susanPwmHz)
+
+global picam
+
+def main():
+	setupCam()
+	print("Capturing")
+	capturePlant()
+
+def capturePlant():
+	print calendar.timegm(time.gmtime())
+	for picture in range(0, 36, 1):
+		GPIO.output(susanEnablePinNum, 0)
+		stepNum = 0
+		susanStepPin.start(susanDutyCycle)
+		time.sleep(susanStepTime)
+		susanStepPin.stop()
+		
+def collectData():
+	return
+
+def toggleLight():
+	return
+
+def toggleHeat():
+	return
+
+def toggleWater():
+	return
+
+def setupCam():
+	print("Setting up PiCam")
+	with picamera.PiCamera() as global picam:	picam.resolution(1920, 1080)
+	
+main()

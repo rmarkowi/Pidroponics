@@ -1,8 +1,9 @@
-import RPi.GPIO as GPIO
-import time
-import picamera
-import os
+import RPi.GPIO as GPIO 
+import time 
+import picamera 
+import os 
 from datetime import datetime
+import Adafruit_DHT as dht
 
 print("Starting pidroponics-main")
 susanEnablePinNum = 17
@@ -10,7 +11,7 @@ susanDirPinNum = 2
 susanStepPinNum = 4
 susanPwmHz = 10
 susanDutyCycle = 50
-susanStepTime = 1.388888
+susanStepTime = 0.15
 susanCamDelay = .2
 susanEnableDelay = .5
 
@@ -28,9 +29,35 @@ susanStepPin = GPIO.PWM(susanStepPinNum, susanPwmHz)
 
 picam = 0
 
+sensorValueStorage = 240
+
+tempSensePinNum = 5
+tempReadings = []
+humidityReadings = []
+
+lightTogglePin = 6
+GPIO.setup(lightTogglePin, 0)
+GPIO.output(lightTogglePin, 0)
+lightToggled = False
+
+waterTogglePin = 13
+GPIO.setup(waterTogglePin, 0)
+GPIO.output(waterTogglePin, 0)
+waterToggled = False
+
+heatTogglePin = 13
+GPIO.setup(heatTogglePin, 0)
+GPIO.output(heatTogglePin, 0)
+heatToggled = False
+
+
 def main():
 	setupCam()
-	capturePlant()
+
+	"""while(not capturePlant()):
+		pass"""
+	while(not collectData()):
+		pass
 
 def capturePlant():
 	print("Taking Capture at " + str(datetime.now()))
@@ -52,18 +79,52 @@ def capturePlant():
 		picam.capture(currentDir + "/" + str(picture) + ".jpg")
 		time.sleep(susanCamDelay)
 	enableSusan(False)
+	return True	
 		
 def collectData():
-	return
+	print("Taking measurement readings at " + str(datetime.now()))
+	print("Taking Temp/Humidity Readings")
+	currentHumidity, currentTemp = dht.read_retry(dht.DHT22, tempSensePinNum)
+	
+	tempReadings.append(currentTemp)
+	humidityReadings.append(currentHumidity)
+
+	if(len(tempReadings) >= sensorValueStorage):
+		tempReadings.pop(0)
+	if(len(humidityReadings) >= sensorValueStorage):
+		humidityReadings.pop(0)
+	
+	return True
 
 def toggleLight():
-	return
+	if(lightToggled):
+		print("Turning light off")
+		GPIO.output(lightTogglePin, 0)
+		lightToggled = False
+	else:
+		print("Turning light on")
+		GPIO.output(lightTogglePin, 1)
+		lightToggled = True
 
 def toggleHeat():
-	return
+        if(heatToggled):
+                print("Turning heat off")
+                GPIO.output(heatTogglePin, 0)
+                heatToggled = False
+        else:
+                print("Turning heat on")
+                GPIO.output(heatTogglePin, 1)
+                heatToggled = True
 
 def toggleWater():
-	return
+	if(waterToggled):
+		print("Turning water off")
+		GPIO.output(waterTogglePin, 0)
+		waterToggled = False
+	else:
+		print("Turning water on")
+		GPIO.output(waterTogglePin, 1)
+		waterToggled = True
 
 def setupCam():
 	print("Setting up PiCam")
