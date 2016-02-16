@@ -53,11 +53,40 @@ heatToggled = False
 
 def main():
 	setupCam()
-
-	"""while(not capturePlant()):
-		pass"""
+	while(not capturePlants()):
+		pass
 	while(not collectData()):
 		pass
+	toggleLight()
+	time.sleep(5)
+	toggleLight()
+	time.sleep(5)
+	toggleWater()
+	time.sleep(5)
+	toggleWater()
+	time.sleep(5)
+	toggleHeat()
+	time.sleep(5)
+	toggleHear()
+	time.sleep(5)
+	print("Begining Life Sequence")
+	while(True):
+	        currentHour = datetime.now().hour
+		currentMinute = datetime.now().minute
+		if(currentHour % 12 == 0):
+			while(not capturePlant()):
+				pass
+		if(currentMinute == 0):
+			while(not collectData()):
+			pass
+		if(currentHour == 7 || currentHour == 23):
+			toggleLight()
+		if(currentMinute % 5 == 0)
+			toggleWater()
+			time.sleep(120)
+			toggleWater()
+		if(tempReadings[-1] <= 16 || tempReadings[-1] >= 27):	
+			toggleHeat()
 
 def capturePlant():
 	print("Taking Capture at " + str(datetime.now()))
